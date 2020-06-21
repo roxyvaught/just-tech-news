@@ -4,9 +4,25 @@ const routes = require('./controllers/');
 const sequelize = require('./config/connection');
 const exphbs = require('express-handlebars');
 const hbs = exphbs.create({});
+const session = require('express-session');
 
 const app = express();
 const PORT = process.env.PORT || 3002;
+
+// Set up Express session and connect to sequelize database
+const SequelizeStore = require('connect-session-sequelize')(session.Store);
+
+const sess = {
+  secret: 'alphaDog',
+  cookie: {},
+  resave: false,
+  saveUninitialized: true,
+  store: new SequelizeStore({
+    db: sequelize
+  })
+};
+
+app.use(session(sess));
 
 // Set up template engine
 app.engine('handlebars', hbs.engine);
